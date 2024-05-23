@@ -1,0 +1,40 @@
+version: 0.2
+
+env:
+  parameter-store:
+    DOCKER_REGISTRY_USERNAME: "/cloud-cicd/docker-credentials/username"
+    DOCKER_REGISTRY_PASSWORD: "/cloud-cicd/docker-credentials/password"
+
+  variables:
+    DOCKER_REGISTRY_URL: "https://index.docker.io/v1/"
+    IMAGE_NAME: "pranesh1998/python-flask"
+    IMAGE_TAG: "latest"
+
+phases:
+
+  pre_build:
+    commands:
+      - echo Logging in to Docker Hub...
+      - echo $DOCKER_REGISTRY_PASSWORD | docker login -u $DOCKER_REGISTRY_USERNAME --password-stdin $DOCKER_REGISTRY_URL
+
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+
+  post_build:
+    commands:
+      - echo Pushing the Docker image to Docker Hub...
+      - docker push $IMAGE_NAME:$IMAGE_TAG
+
+artifacts:
+  files:
+    - '**/*'
+  name: build-artifacts
+  discard-paths: no
+  base-directory: 'build-output'
+
+cache:
+  paths:
+    - '/root/.cache/pip'
+    - 'build-output/**/*'
