@@ -5,4 +5,4 @@ set -e
 docker pull pranesh1998/python-flask:latest
 
 # Run the Docker image as a container
-docker run -dit -p 80:80 pranesh1998/python-flask
+docker run -d -p 80:8080 pranesh1998/python-flask
